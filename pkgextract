@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+
+FPATH="$(realpath $1)"
+FNAME="$(basename "$FPATH")"
+
+PKG_NAME="$(echo "$FNAME" | sed 's|_.*||g')"
+
+# Extract package control files
+CTRL_PATH="/tmp/${PKG_NAME}-DEBIAN"
+dpkg-deb -e "$FPATH" "$CTRL_PATH"
+
+cd "$CTRL_PATH"
+
+# Rename and move control info files
+find * -exec mv "{}" "/var/lib/dpkg/info/$PKG_NAME.{}" \;
+
+cd -
+# If this fails, there was probably a 
+rmdir "$CTRL_PATH"
+
+dpkg -i "$FPATH"
