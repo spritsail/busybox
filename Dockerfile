@@ -1,59 +1,47 @@
-FROM busybox:glibc
+FROM debian:jessie-slim as builder
 
-ARG REPO=http://ftp.de.debian.org/debian/pool/main
-ARG ARCH=amd64
 
-ARG LIBC6_VER=2.19-18+deb8u9
-ARG LIBGCC_VER=4.9.2-10
-ARG LIBSSL_VER=1.0.1t-1+deb8u6
+ARG ARCH=x86_64
+ARG PACKAGES="core/glibc community/busybox"
+ARG DEBIAN_FRONTEND=noninteractive
 
-ARG SU_EXEC_VER=v0.2
-ARG TINI_VER=v0.14.0
+WORKDIR /output
 
-ADD pkgextract /usr/local/bin/
+RUN apt-get update -qy && \
+    apt-get install -qy curl build-essential
+
+# Download and install glibc & busybox from Arch Linux
+RUN mkdir -p usr/bin usr/lib dev proc root etc && \
+    ln -sv usr/bin bin && \
+    ln -sv usr/bin sbin && \
+    ln -sv usr/lib lib && \
+    ln -sv usr/lib lib64 && \
+    for pkg in $PACKAGES; do \
+        repo=$(echo $pkg | cut -d/ -f1); \
+        name=$(echo $pkg | cut -d/ -f2); \
+        curl -L https://archlinux.org/packages/$repo/$ARCH/$name/download \
+            | tar xJ -C . ; \
+    done && \
+    rm -f .BUILDINFO .INSTALL .PKGINFO .MTREE && \
+    for i in $(bin/busybox --list); do ln -s /bin/busybox bin/$i; done && \
+    rm -rf usr/share usr/include lib/*.a lib/*.o lib/gconv \
+           bin/ldconfig bin/sln bin/localedef bin/nscd
+
+ARG DESTDIR=/output/libressl
 
 WORKDIR /tmp
-RUN mkdir -p /var/lib/dpkg/info && \
-    # Fetch dependencies
-    wget ${REPO}/g/glibc/libc6_${LIBC6_VER}_${ARCH}.deb && \
-    wget ${REPO}/g/glibc/libc6-${ARCH}_${LIBC6_VER}_i386.deb && \
-    wget ${REPO}/g/glibc/multiarch-support_${LIBC6_VER}_${ARCH}.deb && \
-    wget ${REPO}/g/gcc-4.9/libgcc1_${LIBGCC_VER}_${ARCH}.deb && \
-    wget ${REPO}/g/gcc-4.9/gcc-4.9-base_${LIBGCC_VER}_${ARCH}.deb && \
-    wget ${REPO}/o/openssl/libssl1.0.0_${LIBSSL_VER}_${ARCH}.deb && \
-    wget ${REPO}/o/openssl/openssl_${LIBSSL_VER}_${ARCH}.deb && \
-    \
-    # Lie about libc6 being installed 
-    dpkg-deb -f libc6_*.deb | sed '/Depends: .*/d' > /var/lib/dpkg/status && \
-    echo "Status: install ok installed" >> /var/lib/dpkg/status && \
-    \
-    # Install multiarch && gcc
-    pkgextract libc6-${ARCH}*.deb && \
-    pkgextract multiarch-support*.deb && \
-    pkgextract gcc-4.9-base*.deb && \
-    pkgextract libgcc1*.deb && \
-    \
-    # Lie about libssl being installed to dpkg
-    dpkg-deb -f libssl1.0*.deb | sed 's|, debconf.*||g' >> /var/lib/dpkg/status && \
-    echo "Status: install ok installed" >> /var/lib/dpkg/status && \
-    # Actually 'install' libssl by extracting the files
-    dpkg-deb -x libssl1.0*.deb / && \
-    # Manually link the library files
-    ln -sfv /usr/lib/x86_64-linux-gnu/libssl.so.1.0.0 /lib && \
-    ln -sfv /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.0 /lib && \
-    # Install openssl
-    pkgextract openssl*.deb && \
-    \
-    # Install su-exec & tini
-    mkdir -p /usr/local/bin /sbin && \
-    wget -O /usr/local/bin/su-exec https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.${ARCH} && \
-    wget -O /sbin/tini https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-${ARCH} && \
-    chmod +x /usr/local/bin/su-exec /sbin/tini && \
-    \
-    # Cleanup
-    rm -f *.deb && \
-    rm -rf /usr/share && \
-    rm -rf /usr/lib64/gconv # Hopefully this isn't required
 
+# Build and install openssl
+RUN curl -L https://www.openssl.org/source/openssl-1.1.0e.tar.gz | \
+    tar xz -C /tmp --strip-components=1 && \
+    ./config --prefix=/output && \
+    make install_sw && \
+    rm /output/lib/*.a && \
+    rm -r /output/include
+    
+# =============
+
+FROM scratch
 WORKDIR /
-ENV LD_LIBRARY_PATH=/lib:/lib/x86_64-linux-gnu:/usr/lib:/usr/lib/x86_64-linux-gnu
+COPY --from=builder /output/ / 
+CMD ["sh"]
