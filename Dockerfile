@@ -47,3 +47,4 @@ RUN mkdir -p /var/lib/dpkg/info && \
     rm -rf /usr/lib64/gconv # Hopefully this isn't required
 
 WORKDIR /
+ENV LD_LIBRARY_PATH=/lib:/lib/x86_64-linux-gnu:/usr/lib:/usr/lib/x86_64-linux-gnu
