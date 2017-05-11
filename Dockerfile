@@ -7,6 +7,9 @@ ARG LIBC6_VER=2.19-18+deb8u9
 ARG LIBGCC_VER=4.9.2-10
 ARG LIBSSL_VER=1.0.1t-1+deb8u6
 
+ARG SU_EXEC_VER=v0.2
+ARG TINI_VER=v0.14.0
+
 ADD pkgextract /usr/local/bin/
 
 WORKDIR /tmp
@@ -40,6 +43,12 @@ RUN mkdir -p /var/lib/dpkg/info && \
     ln -sfv /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.0 /lib && \
     # Install openssl
     pkgextract openssl*.deb && \
+    \
+    # Install su-exec & tini
+    mkdir -p /usr/local/bin /sbin && \
+    wget -O /usr/local/bin/su-exec https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.${ARCH} && \
+    wget -O /sbin/tini https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-${ARCH} && \
+    chmod +x /usr/local/bin/su-exec /sbin/tini && \
     \
     # Cleanup
     rm -f *.deb && \
