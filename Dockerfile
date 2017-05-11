@@ -21,15 +21,14 @@ RUN for pkg in $PACKAGES; do \
         name=$(echo $pkg | cut -d/ -f2); \
         curl -L https://archlinux.org/packages/$repo/$ARCH/$name/download \
             | tar xJ -C . ; \
-    done
-
-# Pull and install busybox binaries
-RUN curl -L https://busybox.net/downloads/binaries/1.26.2-defconfig-multiarch/busybox-$ARCH > /output/usr/bin/busybox && \
-    chmod +x /output/bin/busybox && \
-    /output/bin/busybox --install -s /output/bin && \
+    done && \
     rm -f .BUILDINFO .INSTALL .PKGINFO .MTREE && \
     rm -rf usr/share usr/include lib/*.a lib/*.o lib/gconv \
            bin/ldconfig bin/sln bin/localedef bin/nscd
+
+# Pull and install busybox binaries
+RUN curl -L https://busybox.net/downloads/binaries/1.26.2-defconfig-multiarch/busybox-$ARCH > /output/usr/bin/busybox && \
+    chmod +x /output/bin/busybox
 
 WORKDIR /tmp
 
@@ -46,5 +45,7 @@ RUN curl -L https://www.openssl.org/source/openssl-1.1.0e.tar.gz | \
 
 FROM scratch
 WORKDIR /
-COPY --from=builder /output/ / 
+COPY --from=builder /output/ /
+# Needed cos we dont have /bin/sh yet
+RUN ["/bin/busybox", "--install", "-s", "/bin"]
 CMD ["sh"]
