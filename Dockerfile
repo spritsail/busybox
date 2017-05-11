@@ -1,37 +1,40 @@
 FROM debian:jessie-slim as builder
 
-
 ARG ARCH=x86_64
-ARG PACKAGES="core/glibc community/busybox"
+ARG PACKAGES="core/glibc"
 ARG DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /output
 
+#Set up our dependencies, configure the output filesystem a bit
 RUN apt-get update -qy && \
-    apt-get install -qy curl build-essential
-
-# Download and install glibc & busybox from Arch Linux
-RUN mkdir -p usr/bin usr/lib dev proc root etc && \
+    apt-get install -qy curl build-essential && \
+    mkdir -p usr/bin usr/lib dev proc root etc && \
     ln -sv usr/bin bin && \
     ln -sv usr/bin sbin && \
     ln -sv usr/lib lib && \
-    ln -sv usr/lib lib64 && \
-    for pkg in $PACKAGES; do \
+    ln -sv usr/lib lib64
+
+# Removing this :P
+RUN for pkg in $PACKAGES; do \
         repo=$(echo $pkg | cut -d/ -f1); \
         name=$(echo $pkg | cut -d/ -f2); \
         curl -L https://archlinux.org/packages/$repo/$ARCH/$name/download \
             | tar xJ -C . ; \
-    done && \
+    done
+
+# Pull and install busybox binaries
+RUN curl -L https://busybox.net/downloads/binaries/1.26.2-defconfig-multiarch/busybox-$ARCH > /output/usr/bin/busybox && \
+    chmod +x /output/bin/busybox && \
+    /output/bin/busybox --install -s /output/bin && \
     rm -f .BUILDINFO .INSTALL .PKGINFO .MTREE && \
-    for i in $(bin/busybox --list); do ln -s /bin/busybox bin/$i; done && \
     rm -rf usr/share usr/include lib/*.a lib/*.o lib/gconv \
            bin/ldconfig bin/sln bin/localedef bin/nscd
-
-ARG DESTDIR=/output/libressl
 
 WORKDIR /tmp
 
 # Build and install openssl
+ARG DESTDIR=/output/libressl
 RUN curl -L https://www.openssl.org/source/openssl-1.1.0e.tar.gz | \
     tar xz -C /tmp --strip-components=1 && \
     ./config --prefix=/output && \
