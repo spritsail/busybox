@@ -13,7 +13,7 @@ RUN apt-get update -qy && \
     ln -sv usr/bin bin && \
     ln -sv usr/bin sbin && \
     ln -sv usr/lib lib && \
-    ln -sv usr/lib lib64
+    ln -sv lib lib64
 
 # Removing this :P
 RUN for pkg in $PACKAGES; do \
