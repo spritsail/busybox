@@ -23,7 +23,8 @@ RUN apt-get update -qy && \
 RUN curl -L https://busybox.net/downloads/binaries/$BUSYB_VER-defconfig-multiarch/busybox-$ARCH > bin/busybox && \
     curl -L https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
     curl -L https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
-    chmod +x bin/busybox sbin/su-exec sbin/tini
+    chmod +x bin/busybox sbin/su-exec sbin/tini && \
+    bin/busybox --list-full | xargs -i ln -sfv /bin/busybox "$(pwd)/{}"
 
 WORKDIR /tmp
 
@@ -77,6 +78,4 @@ RUN curl -L https://www.openssl.org/source/openssl-1.1.0e.tar.gz | \
 FROM scratch
 WORKDIR /
 COPY --from=builder /output/ /
-# Needed cos we dont have /bin/sh yet
-RUN ["/bin/busybox", "--install", "-s", "/bin"]
 CMD ["sh"]
