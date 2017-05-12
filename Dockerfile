@@ -13,7 +13,7 @@ WORKDIR /output
 #Set up our dependencies, configure the output filesystem a bit
 RUN apt-get update -qy && \
     apt-get install -qy curl build-essential gawk linux-libc-dev && \
-    mkdir -p usr/bin usr/sbin usr/lib dev proc root etc && \
+    mkdir -p dev etc home proc root tmp usr/bin usr/sbin usr/lib var && \
     ln -sv usr/bin bin && \
     ln -sv usr/sbin sbin && \
     ln -sv usr/lib lib && \
