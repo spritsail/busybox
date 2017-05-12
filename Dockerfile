@@ -32,9 +32,9 @@ RUN for pkg in $PACKAGES; do \
 
 # Pull busybox and some other utilities
 RUN curl -L https://busybox.net/downloads/binaries/$BUSYB_VER-defconfig-multiarch/busybox-$ARCH > /output/usr/bin/busybox && \
-    curl -L https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > /output/bin/su-exec && \
+    curl -L https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > /output/sbin/su-exec && \
     curl -L https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > /output/bin/tini && \
-    chmod +x /output/bin/busybox /output/bin/su-exec /output/bin/tini
+    chmod +x /output/bin/busybox /output/bin/su-exec /output/sbin/tini
 
 WORKDIR /tmp
 
