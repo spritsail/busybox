@@ -13,17 +13,17 @@ WORKDIR /output
 #Set up our dependencies, configure the output filesystem a bit
 RUN apt-get update -qy && \
     apt-get install -qy curl build-essential gawk linux-libc-dev && \
-    mkdir -p usr/bin usr/lib dev proc root etc && \
+    mkdir -p usr/bin usr/sbin usr/lib dev proc root etc && \
     ln -sv usr/bin bin && \
-    ln -sv usr/bin sbin && \
+    ln -sv usr/sbin sbin && \
     ln -sv usr/lib lib && \
     ln -sv usr/lib lib64
 
 # Pull busybox and some other utilities
-RUN curl -L https://busybox.net/downloads/binaries/$BUSYB_VER-defconfig-multiarch/busybox-$ARCH > usr/bin/busybox && \
+RUN curl -L https://busybox.net/downloads/binaries/$BUSYB_VER-defconfig-multiarch/busybox-$ARCH > bin/busybox && \
     curl -L https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
-    curl -L https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > bin/tini && \
-    chmod +x bin/busybox bin/su-exec sbin/tini
+    curl -L https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
+    chmod +x bin/busybox sbin/su-exec sbin/tini
 
 WORKDIR /tmp
 
