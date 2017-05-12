@@ -24,7 +24,7 @@ RUN curl -L https://busybox.net/downloads/binaries/$BUSYB_VER-defconfig-multiarc
     curl -L https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
     curl -L https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
     chmod +x bin/busybox sbin/su-exec sbin/tini && \
-    bin/busybox --list-full | xargs -i ln -sfv /bin/busybox "$(pwd)/{}"
+    bin/busybox --list-full | xargs -i ln -s /bin/busybox "$(pwd)/{}"
 
 WORKDIR /tmp
 
@@ -41,7 +41,7 @@ RUN curl -L https://ftp.gnu.org/gnu/glibc/glibc-$GLIBC_VER.tar.xz | tar xJ && \
     echo "rootsbindir=/bin" >> configparms && \
 	\
     rm -rf /usr/include/x86_64-linux-gnu/c++ && \
-    ln -sfv /usr/include/x86_64-linux-gnu/* /usr/include && \
+    ln -s /usr/include/x86_64-linux-gnu/* /usr/include && \
     ../glibc-$GLIBC_VER/configure \
         --prefix="$(pwd)/root" \
         --libdir="$(pwd)/root/lib" \
