@@ -64,15 +64,6 @@ RUN cp -d glibc-build/out/lib/*.so /output/lib && \
     echo '/usr/lib' > /output/etc/ld.so.conf && \
     ldconfig -r /output
 
-# Build and install openssl
-ARG DESTDIR=/output/libressl
-RUN curl -L https://www.openssl.org/source/openssl-1.1.0e.tar.gz | \
-    tar xz -C /tmp --strip-components=1 && \
-    ./config --prefix=/output && \
-    make install_sw && \
-    rm /output/lib/*.a && \
-    rm -r /output/include
-    
 # =============
 
 FROM scratch
