@@ -4,6 +4,10 @@ ARG ARCH=x86_64
 ARG PACKAGES="core/glibc"
 ARG DEBIAN_FRONTEND=noninteractive
 
+ARG BUSYB_VER=1.26.2
+ARG SU_EXEC_VER=v0.2
+ARG TINI_VER=v0.14.0
+
 WORKDIR /output
 
 #Set up our dependencies, configure the output filesystem a bit
@@ -26,9 +30,11 @@ RUN for pkg in $PACKAGES; do \
     rm -rf usr/share usr/include lib/*.a lib/*.o lib/gconv \
            bin/ldconfig bin/sln bin/localedef bin/nscd
 
-# Pull and install busybox binaries
-RUN curl -L https://busybox.net/downloads/binaries/1.26.2-defconfig-multiarch/busybox-$ARCH > /output/usr/bin/busybox && \
-    chmod +x /output/bin/busybox
+# Pull busybox and some other utilities
+RUN curl -L https://busybox.net/downloads/binaries/$BUSYB_VER-defconfig-multiarch/busybox-$ARCH > /output/usr/bin/busybox && \
+    curl -L https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > /output/bin/su-exec && \
+    curl -L https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > /output/bin/tini && \
+    chmod +x /output/bin/busybox /output/bin/su-exec /output/bin/tini
 
 WORKDIR /tmp
 
