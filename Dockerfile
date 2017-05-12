@@ -60,7 +60,7 @@ RUN curl -L https://ftp.gnu.org/gnu/glibc/glibc-$GLIBC_VER.tar.xz | tar xJ && \
     make && make install_root=$(pwd)/out install
 
 # Copy glibc libs & generate ld cache
-RUN cp -r glibc-build/out/lib/*.so /output/lib && \
+RUN cp -d glibc-build/out/lib/*.so /output/lib && \
     echo '/usr/lib' > /output/etc/ld.so.conf && \
     ldconfig -r /output
 
