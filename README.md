@@ -3,6 +3,7 @@
 [uclibc]: https://www.uclibc.org/
 
 # [adamant/busybox][hub] - A tiny image, nurtured from source
+[![](https://images.microbadger.com/badges/image/adamant/busybox.svg)](https://microbadger.com/images/adamant/busybox) [![](https://images.microbadger.com/badges/version/adamant/busybox.svg)][hub] [![Docker Stars](https://img.shields.io/docker/stars/adamant/busybox.svg)][hub] [![Docker Pulls](https://img.shields.io/docker/pulls/adamant/busybox.svg)][hub]
 
 This Docker base image has been custom crafted from source to provide just enough functionality in the tiniest footprint. Included in the image are the following:
  - GNU libc6 (glibc) - _C standard library, found in most linux distributions_ | https://www.gnu.org/software/libc/
@@ -12,6 +13,13 @@ This Docker base image has been custom crafted from source to provide just enoug
 Additionally, the following small utilities have been included for convenience and good container practice:
  - su-exec - _A convenient utility for changing user and dropping privilege_ | https://github.com/ncopa/su-exec
  - tini - _A tiny but valid `init` for containers_ | https://github.com/krallin/tini
+
+## Supported tags and respective `Dockerfile` links
+
+There are two main streams of this image: with and without LibreSSL. You can find the dockerfiles below
+
+* `1.0`, `1`, `latest` - [(master/dockerfile)](https://github.com/Adam-Ant/docker-busybox-base/blob/master/Dockerfile)
+* `1.0-libressl`, `1-libressl`, `libressl` - [(libressl/dockerfile)](https://github.com/Adam-Ant/docker-busybox-base/blob/libressl/Dockerfile)
 
 ## Goals for a base image
 
