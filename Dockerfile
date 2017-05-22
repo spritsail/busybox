@@ -13,11 +13,8 @@ WORKDIR /output
 #Set up our dependencies, configure the output filesystem a bit
 RUN apt-get update -qy && \
     apt-get install -qy curl build-essential gawk linux-libc-dev && \
-    mkdir -p dev etc home proc root tmp usr/bin usr/sbin usr/lib var && \
-    ln -sv usr/bin bin && \
-    ln -sv usr/sbin sbin && \
-    ln -sv usr/lib lib && \
-    ln -sv usr/lib lib64
+    mkdir -p bin dev etc home lib proc root sbin tmp usr/bin usr/sbin usr/lib var && \
+    ln -sv lib lib64
 
 # Pull busybox and some other utilities
 RUN curl -L https://busybox.net/downloads/binaries/$BUSYB_VER-defconfig-multiarch/busybox-$ARCH > bin/busybox && \
