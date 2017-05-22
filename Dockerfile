@@ -8,7 +8,8 @@ ARG BUSYB_VER=1.26.2
 ARG SU_EXEC_VER=v0.2
 ARG TINI_VER=v0.14.0
 
-WORKDIR /output
+ARG PREFIX=/output
+WORKDIR $PREFIX
 
 #Set up our dependencies, configure the output filesystem a bit
 RUN apt-get update -qy && \
@@ -21,7 +22,7 @@ RUN curl -L https://busybox.net/downloads/binaries/$BUSYB_VER-defconfig-multiarc
     curl -L https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
     curl -L https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
     chmod +x bin/busybox sbin/su-exec sbin/tini && \
-    bin/busybox --list-full | xargs -i ln -s /bin/busybox "$(pwd)/{}"
+    bin/busybox --list-full | xargs -i ln -s /bin/busybox "$PREFIX/{}"
 
 WORKDIR /tmp
 
@@ -57,9 +58,9 @@ RUN curl -L https://ftp.gnu.org/gnu/glibc/glibc-$GLIBC_VER.tar.xz | tar xJ && \
     make && make install_root=$(pwd)/out install
 
 # Copy glibc libs & generate ld cache
-RUN cp -d glibc-build/out/lib/*.so /output/lib && \
-    echo '/usr/lib' > /output/etc/ld.so.conf && \
-    ldconfig -r /output
+RUN cp -d glibc-build/out/lib/*.so "$PREFIX/lib" && \
+    echo '/usr/lib' > "$PREFIX/etc/ld.so.conf" && \
+    ldconfig -r "$PREFIX"
 
 # =============
 
