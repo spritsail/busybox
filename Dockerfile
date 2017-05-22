@@ -15,6 +15,7 @@ WORKDIR $PREFIX
 RUN apt-get update -qy && \
     apt-get install -qy curl build-essential gawk linux-libc-dev && \
     mkdir -p bin dev etc home lib proc root sbin tmp usr/bin usr/sbin usr/lib var && \
+    # This is probably only relevant on 64bit systems?
     ln -sv lib lib64
 
 # Pull busybox and some other utilities
@@ -22,6 +23,7 @@ RUN curl -L https://busybox.net/downloads/binaries/$BUSYB_VER-defconfig-multiarc
     curl -L https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
     curl -L https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
     chmod +x bin/busybox sbin/su-exec sbin/tini && \
+    # "Install" busybox, creating symlinks to all binaries it provides
     bin/busybox --list-full | xargs -i ln -s /bin/busybox "$PREFIX/{}"
 
 WORKDIR /tmp
@@ -38,8 +40,10 @@ RUN curl -L https://ftp.gnu.org/gnu/glibc/glibc-$GLIBC_VER.tar.xz | tar xJ && \
     echo "sbindir=/bin" >> configparms && \
     echo "rootsbindir=/bin" >> configparms && \
 	\
+    # Fix debian lib path weirdness
     rm -rf /usr/include/x86_64-linux-gnu/c++ && \
     ln -s /usr/include/x86_64-linux-gnu/* /usr/include && \
+    \
     ../glibc-$GLIBC_VER/configure \
         --prefix="$(pwd)/root" \
         --libdir="$(pwd)/root/lib" \
