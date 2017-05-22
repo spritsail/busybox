@@ -1,4 +1,4 @@
-[hub]: https://hub.docker.com/AdamAnt/busybox
+[hub]: https://hub.docker.com/r/adamant/busybox
 [musl]: https://www.musl-libc.org/
 [uclibc]: https://www.uclibc.org/
 
