@@ -66,6 +66,17 @@ RUN cp -d glibc-build/out/lib/*.so "$PREFIX/lib" && \
     echo '/usr/lib' > "$PREFIX/etc/ld.so.conf" && \
     ldconfig -r "$PREFIX"
 
+WORKDIR $PREFIX
+
+# Add root user and group
+RUN echo 'root:x:0:0:root:/root:/bin/sh'\\n\
+         'nobody:x:65534:65534:nobody:/:/sbin/nologin' \
+        > etc/passwd && \
+    echo 'root:::0:::::\nnobody:!::0:::::' \
+        > etc/shadow && \
+    echo 'root:x:0:root\nnogroup:x:65533\nnobody:x:65544' \
+        > etc/group
+
 # =============
 
 FROM scratch
