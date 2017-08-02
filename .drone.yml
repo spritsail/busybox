@@ -16,6 +16,8 @@ pipeline:
     environment:
        - DOCKER_HOST=tcp://docker:2375
     commands:
+      - docker run -tt --rm devbuild /bin/busybox
+      - docker run -tt --rm devbuild /bin/sh -c 'test -f /lib/libc-*.so'
       - export RESULT=$(docker run --name=DEV --rm devbuild /bin/sh -c 'echo This is a test string | md5sum | cut -f1 -d\ ' )
       - echo $RESULT
       - test $RESULT = 'b584c39f97dfe71ebceea3fdb860ed6c'
