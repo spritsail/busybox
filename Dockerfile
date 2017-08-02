@@ -41,8 +41,8 @@ RUN curl -L https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz | tar xJ && 
     echo "rootsbindir=/bin" >> configparms && \
 	\
     # Fix debian lib path weirdness
-    rm -rf /usr/include/x86_64-linux-gnu/c++ && \
-    ln -s /usr/include/x86_64-linux-gnu/* /usr/include && \
+    rm -rf /usr/include/${ARCH}-linux-gnu/c++ && \
+    ln -s /usr/include/${ARCH}-linux-gnu/* /usr/include && \
     \
     ../glibc-${GLIBC_VER}/configure \
         --prefix="$(pwd)/root" \
