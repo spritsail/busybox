@@ -68,18 +68,21 @@ RUN cp -d glibc-build/out/lib/*.so "${PREFIX}/lib" && \
 
 WORKDIR $PREFIX
 
-# Add root user and group
-RUN echo 'root:x:0:0:root:/root:/bin/sh'\\n\
-         'nobody:x:65534:65534:nobody:/:/sbin/nologin' \
-        > etc/passwd && \
-    echo 'root:::0:::::\nnobody:!::0:::::' \
-        > etc/shadow && \
-    echo 'root:x:0:root\nnogroup:x:65533\nnobody:x:65544' \
-        > etc/group
+# Add default skeleton configuration files
+RUN for f in passwd shadow group profile; do \
+		curl -sSL -O . "https://git.busybox.net/buildroot/plain/system/skeleton/etc/$f"; \
+	done && \
+	\
+	# Copy /etc/localtime to output
+	ln -vL /etc/localtime etc/
 
 # =============
 
 FROM scratch
 WORKDIR /
+
 COPY --from=builder /output/ /
+RUN mkdir -p /tmp && \
+	chmod 1777 /tmp
+
 CMD ["sh"]
