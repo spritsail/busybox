@@ -85,4 +85,4 @@ COPY --from=builder /output/ /
 RUN mkdir -p /tmp && \
 	chmod 1777 /tmp
 
-CMD ["sh"]
+CMD ["/bin/sh"]
