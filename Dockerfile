@@ -21,8 +21,8 @@ RUN apt-get update -qy && \
     ln -sv lib lib64
 
 # Pull tini and su-exec utilities
-RUN curl -sSL https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
-    curl -sSL https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
+RUN curl -fL https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
+    curl -fL https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
     chmod +x sbin/su-exec sbin/tini
 
 WORKDIR /tmp/glibc
@@ -31,7 +31,7 @@ ARG CFLAGS="-Os -pipe -fstack-protector-strong"
 ARG LDFLAGS="-Wl,-O1,--sort-common -Wl,-s"
 
 # Download and build glibc from source
-RUN curl -sSL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz | tar xJ && \
+RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz | tar xJ && \
     mkdir -p glibc-build && cd glibc-build && \
     \
     echo "slibdir=/lib" >> configparms && \
@@ -68,7 +68,7 @@ RUN cp -d glibc-build/out/lib/*.so "${PREFIX}/lib" && \
 WORKDIR /tmp/busybox
 
 # Download and build busybox from source
-RUN curl -sSL https://busybox.net/downloads/busybox-${BUSYB_VER}.tar.bz2 \
+RUN curl -fL https://busybox.net/downloads/busybox-${BUSYB_VER}.tar.bz2 \
         | tar xj --strip-components=1 && \
     # Use default configuration
     make defconfig && \
@@ -81,7 +81,7 @@ WORKDIR $PREFIX
 
 # Add default skeleton configuration files
 RUN for f in passwd shadow group profile; do \
-        curl -sSL -o "${PREFIX}/etc/$f" "https://git.busybox.net/buildroot/plain/system/skeleton/etc/$f"; \
+        curl -fL -o "${PREFIX}/etc/$f" "https://git.busybox.net/buildroot/plain/system/skeleton/etc/$f"; \
     done && \
     \
     # Copy UTC localtime to output
