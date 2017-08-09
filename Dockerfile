@@ -1,6 +1,7 @@
 FROM debian:stretch-slim as builder
 
 ARG ARCH=x86_64
+ARG ARCH_ALT=i686
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG GLIBC_VER=2.26
@@ -19,7 +20,7 @@ RUN apt-get update -qy && \
     ln -sv lib lib64
 
 # Pull busybox and some other utilities
-RUN curl -L https://busybox.net/downloads/binaries/${BUSYB_VER}-defconfig-multiarch/busybox-${ARCH} > bin/busybox && \
+RUN curl -L https://busybox.net/downloads/binaries/${BUSYB_VER}-${ARCH_ALT}/busybox > bin/busybox && \
     curl -L https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
     curl -L https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
     chmod +x bin/busybox sbin/su-exec sbin/tini && \
