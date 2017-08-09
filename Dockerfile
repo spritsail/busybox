@@ -58,7 +58,8 @@ RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz | tar xJ &&
         --enable-lock-elision \
         --enable-multi-arch \
         --disable-werror && \
-    make && make install_root=$(pwd)/out install
+    make -j "$(nproc)" && \
+    make install_root=$(pwd)/out install
 
 # Copy glibc libs & generate ld cache
 RUN cp -d glibc-build/out/lib/*.so "${PREFIX}/lib" && \
@@ -72,7 +73,7 @@ RUN curl -fL https://busybox.net/downloads/busybox-${BUSYB_VER}.tar.bz2 \
         | tar xj --strip-components=1 && \
     # Use default configuration
     make defconfig && \
-    make && \
+    make -j "$(nproc)" && \
     cp busybox "${PREFIX}/bin" && \
     # "Install" busybox, creating symlinks to all binaries it provides
     bin/busybox --list-full | xargs -i ln -s /bin/busybox "${PREFIX}/{}"
