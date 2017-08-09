@@ -20,9 +20,9 @@ RUN apt-get update -qy && \
     ln -sv lib lib64
 
 # Pull busybox and some other utilities
-RUN curl -L https://busybox.net/downloads/binaries/${BUSYB_VER}-${ARCH_ALT}/busybox > bin/busybox && \
-    curl -L https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
-    curl -L https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
+RUN curl -sSL https://busybox.net/downloads/binaries/${BUSYB_VER}-${ARCH_ALT}/busybox > bin/busybox && \
+    curl -sSL https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
+    curl -sSL https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
     chmod +x bin/busybox sbin/su-exec sbin/tini && \
     # "Install" busybox, creating symlinks to all binaries it provides
     bin/busybox --list-full | xargs -i ln -s /bin/busybox "${PREFIX}/{}"
@@ -33,7 +33,7 @@ ARG CFLAGS="-Os -pipe -fstack-protector-strong"
 ARG LDFLAGS="-Wl,-O1,--sort-common -Wl,-s"
 
 # Download and build glibc from source
-RUN curl -L https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz | tar xJ && \
+RUN curl -sSL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz | tar xJ && \
     mkdir -p glibc-build && cd glibc-build && \
 	\
     echo "slibdir=/lib" >> configparms && \
