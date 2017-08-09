@@ -1,4 +1,4 @@
-FROM debian:jessie-slim as builder
+FROM debian:stretch-slim as builder
 
 ARG ARCH=x86_64
 ARG DEBIAN_FRONTEND=noninteractive
