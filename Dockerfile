@@ -70,11 +70,11 @@ WORKDIR $PREFIX
 
 # Add default skeleton configuration files
 RUN for f in passwd shadow group profile; do \
-		curl -sSL -O . "https://git.busybox.net/buildroot/plain/system/skeleton/etc/$f"; \
+		curl -sSL -o "${PREFIX}/etc/$f" "https://git.busybox.net/buildroot/plain/system/skeleton/etc/$f"; \
 	done && \
 	\
 	# Copy UTC localtime to output
-	cp /usr/share/tzinfo/Etc/UTC etc/
+	cp /usr/share/zoneinfo/Etc/UTC etc/
 
 # =============
 
