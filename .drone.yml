@@ -28,11 +28,7 @@ pipeline:
     environment:
       - DOCKER_HOST=tcp://docker:2375
     commands:
-      - apk add --no-cache openssl
-      - docker tag devbuild adamant/busybox:latest
-      - docker tag devbuild adamant/busybox:1
-      - docker tag devbuild adamant/busybox:1.0
       - docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - docker push adamant/busybox:latest
-      - docker push adamant/busybox:1
-      - docker push adamant/busybox:1.0
+      - docker tag devbuild adamant/busybox:latest
+      - docker tag devbuild adamant/busybox:1.1
+      - docker push adamant/busybox
