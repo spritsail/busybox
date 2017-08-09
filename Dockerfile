@@ -76,7 +76,7 @@ RUN curl -fL https://busybox.net/downloads/busybox-${BUSYB_VER}.tar.bz2 \
     make -j "$(nproc)" && \
     cp busybox "${PREFIX}/bin" && \
     # "Install" busybox, creating symlinks to all binaries it provides
-    bin/busybox --list-full | xargs -i ln -s /bin/busybox "${PREFIX}/{}"
+    ./busybox --list-full | xargs -i ln -s /bin/busybox "${PREFIX}/{}"
 
 WORKDIR $PREFIX
 
