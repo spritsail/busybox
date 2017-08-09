@@ -7,14 +7,14 @@ pipeline:
   build:
     image: docker
     environment:
-       - DOCKER_HOST=tcp://docker:2375
+      - DOCKER_HOST=tcp://docker:2375
     commands:
-       - docker build -t devbuild . 
+      - docker build -t devbuild .
 
   test:
     image: docker
     environment:
-       - DOCKER_HOST=tcp://docker:2375
+      - DOCKER_HOST=tcp://docker:2375
     commands:
       - docker pull adamant/busybox
       - docker tag adamant/busybox devbuild
@@ -29,13 +29,13 @@ pipeline:
     image: docker
     secrets: [ DOCKER_USER, DOCKER_PASS ]
     environment:
-       - DOCKER_HOST=tcp://docker:2375
+      - DOCKER_HOST=tcp://docker:2375
     commands:
-       - apk add --no-cache openssl
-       - docker tag devbuild adamant/busybox:latest
-       - docker tag devbuild adamant/busybox:1
-       - docker tag devbuild adamant/busybox:1.0
-       - docker login -u $DOCKER_USER -p $DOCKER_PASS
-       - docker push adamant/busybox:latest
-       - docker push adamant/busybox:1
-       - docker push adamant/busybox:1.0
+      - apk add --no-cache openssl
+      - docker tag devbuild adamant/busybox:latest
+      - docker tag devbuild adamant/busybox:1
+      - docker tag devbuild adamant/busybox:1.0
+      - docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push adamant/busybox:latest
+      - docker push adamant/busybox:1
+      - docker push adamant/busybox:1.0
