@@ -17,17 +17,15 @@ RUN apt-get update -qy && \
     apt-get install -qy curl build-essential gawk linux-libc-dev && \
     mkdir -p bin dev etc home lib proc root sbin tmp usr/bin usr/sbin usr/lib var && \
     # This is probably only relevant on 64bit systems?
+    ln -sv usr/lib usr/lib64 && \
     ln -sv lib lib64
 
-# Pull busybox and some other utilities
-RUN curl -sSL https://busybox.net/downloads/binaries/${BUSYB_VER}-${ARCH_ALT}/busybox > bin/busybox && \
-    curl -sSL https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
+# Pull tini and su-exec utilities
+RUN curl -sSL https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
     curl -sSL https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
-    chmod +x bin/busybox sbin/su-exec sbin/tini && \
-    # "Install" busybox, creating symlinks to all binaries it provides
-    bin/busybox --list-full | xargs -i ln -s /bin/busybox "${PREFIX}/{}"
+    chmod +x sbin/su-exec sbin/tini
 
-WORKDIR /tmp
+WORKDIR /tmp/glibc
 
 ARG CFLAGS="-Os -pipe -fstack-protector-strong"
 ARG LDFLAGS="-Wl,-O1,--sort-common -Wl,-s"
@@ -66,6 +64,18 @@ RUN curl -sSL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz | tar xJ &
 RUN cp -d glibc-build/out/lib/*.so "${PREFIX}/lib" && \
     echo '/usr/lib' > "${PREFIX}/etc/ld.so.conf" && \
     ldconfig -r "${PREFIX}"
+
+WORKDIR /tmp/busybox
+
+# Download and build busybox from source
+RUN curl -sSL https://busybox.net/downloads/busybox-${BUSYB_VER}.tar.bz2 \
+		| tar xj --strip-components=1 && \
+	# Use default configuration
+	make defconfig && \
+	make && \
+	cp busybox "${PREFIX}/bin" && \
+    # "Install" busybox, creating symlinks to all binaries it provides
+    bin/busybox --list-full | xargs -i ln -s /bin/busybox "${PREFIX}/{}"
 
 WORKDIR $PREFIX
 
