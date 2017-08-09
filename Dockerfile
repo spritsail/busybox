@@ -33,12 +33,12 @@ ARG LDFLAGS="-Wl,-O1,--sort-common -Wl,-s"
 # Download and build glibc from source
 RUN curl -sSL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz | tar xJ && \
     mkdir -p glibc-build && cd glibc-build && \
-	\
+    \
     echo "slibdir=/lib" >> configparms && \
     echo "rtlddir=/lib" >> configparms && \
     echo "sbindir=/bin" >> configparms && \
     echo "rootsbindir=/bin" >> configparms && \
-	\
+    \
     # Fix debian lib path weirdness
     rm -rf /usr/include/${ARCH}-linux-gnu/c++ && \
     ln -s /usr/include/${ARCH}-linux-gnu/* /usr/include && \
@@ -69,11 +69,11 @@ WORKDIR /tmp/busybox
 
 # Download and build busybox from source
 RUN curl -sSL https://busybox.net/downloads/busybox-${BUSYB_VER}.tar.bz2 \
-		| tar xj --strip-components=1 && \
-	# Use default configuration
-	make defconfig && \
-	make && \
-	cp busybox "${PREFIX}/bin" && \
+        | tar xj --strip-components=1 && \
+    # Use default configuration
+    make defconfig && \
+    make && \
+    cp busybox "${PREFIX}/bin" && \
     # "Install" busybox, creating symlinks to all binaries it provides
     bin/busybox --list-full | xargs -i ln -s /bin/busybox "${PREFIX}/{}"
 
@@ -81,11 +81,11 @@ WORKDIR $PREFIX
 
 # Add default skeleton configuration files
 RUN for f in passwd shadow group profile; do \
-		curl -sSL -o "${PREFIX}/etc/$f" "https://git.busybox.net/buildroot/plain/system/skeleton/etc/$f"; \
-	done && \
-	\
-	# Copy UTC localtime to output
-	cp /usr/share/zoneinfo/Etc/UTC etc/
+        curl -sSL -o "${PREFIX}/etc/$f" "https://git.busybox.net/buildroot/plain/system/skeleton/etc/$f"; \
+    done && \
+    \
+    # Copy UTC localtime to output
+    cp /usr/share/zoneinfo/Etc/UTC etc/
 
 # =============
 
@@ -94,6 +94,6 @@ WORKDIR /
 
 COPY --from=builder /output/ /
 RUN mkdir -p /tmp && \
-	chmod 1777 /tmp
+    chmod 1777 /tmp
 
 CMD ["/bin/sh"]
