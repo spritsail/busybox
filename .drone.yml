@@ -16,9 +16,6 @@ pipeline:
     environment:
       - DOCKER_HOST=tcp://docker:2375
     commands:
-      - docker pull adamant/busybox
-      - docker tag adamant/busybox devbuild
-      - set -ax
       - docker run --rm devbuild /bin/sh -xec 'true'
       - docker run --rm devbuild /bin/sh -xec 'test -f /lib/libc-*.so'
       - docker run --rm devbuild /bin/sh -xec 'nslookup google.com'
