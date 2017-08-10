@@ -18,8 +18,8 @@ Additionally, the following small utilities have been included for convenience a
 
 There are two main streams of this image: with and without LibreSSL. You can find the dockerfiles below
 
-* `1.0`, `1`, `latest` - [(master/dockerfile)](https://github.com/Adam-Ant/docker-busybox-base/blob/master/Dockerfile)
-* `1.0-libressl`, `1-libressl`, `libressl` - [(libressl/dockerfile)](https://github.com/Adam-Ant/docker-busybox-base/blob/libressl/Dockerfile)
+* `1.0`, `latest` - [(master/dockerfile)](https://github.com/Adam-Ant/docker-busybox/blob/master/Dockerfile)
+* `1.0-libressl`, `libressl` - [(libressl/dockerfile)](https://github.com/Adam-Ant/docker-busybox/blob/libressl/Dockerfile)
 
 ## Goals for a base image
 
