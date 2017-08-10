@@ -39,7 +39,7 @@ pipeline:
     server: https://drone.adam-ant.co.uk
     fork: true
     repositories:
-      - Adam-Ant/docker-busybox-base@libressl
+      - Adam-Ant/docker-busybox@libressl
     when:
       event:  [ push, tag, deployment]
       status: [ success ]
