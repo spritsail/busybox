@@ -32,3 +32,14 @@ pipeline:
       - docker tag devbuild adamant/busybox:latest
       - docker tag devbuild adamant/busybox:1.1
       - docker push adamant/busybox
+  
+  downstream:
+    image: plugins/downstream
+    secrets: [ DOWNSTREAM_TOKEN ]
+    server: https://drone.adam-ant.co.uk
+    fork: true
+    repositories:
+      - Adam-Ant/docker-busybox-base@libressl
+    when:
+      event:  [ push, tag, deployment]
+      status: [ success ]

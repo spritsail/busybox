@@ -1,4 +1,4 @@
-FROM debian:stretch-slim as builder
+FROM frebib/debian-builder as builder
 
 ARG ARCH=x86_64
 ARG ARCH_ALT=i686
