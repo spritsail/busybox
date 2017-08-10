@@ -2,7 +2,6 @@ FROM frebib/debian-builder as builder
 
 ARG ARCH=x86_64
 ARG ARCH_ALT=i686
-ARG DEBIAN_FRONTEND=noninteractive
 
 ARG GLIBC_VER=2.26
 ARG BUSYB_VER=1.27.1
@@ -13,9 +12,7 @@ ARG PREFIX=/output
 WORKDIR $PREFIX
 
 #Set up our dependencies, configure the output filesystem a bit
-RUN apt-get update -qy && \
-    apt-get install -qy curl build-essential gawk linux-libc-dev && \
-    mkdir -p bin dev etc home lib proc root sbin tmp usr/bin usr/sbin usr/lib var && \
+RUN mkdir -p bin dev etc home lib proc root sbin tmp usr/bin usr/sbin usr/lib var && \
     # This is probably only relevant on 64bit systems?
     ln -sv usr/lib usr/lib64 && \
     ln -sv lib lib64
@@ -26,9 +23,6 @@ RUN curl -fL https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER
     chmod +x sbin/su-exec sbin/tini
 
 WORKDIR /tmp/glibc
-
-ARG CFLAGS="-Os -pipe -fstack-protector-strong"
-ARG LDFLAGS="-Wl,-O1,--sort-common -Wl,-s"
 
 # Download and build glibc from source
 RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz | tar xJ && \
