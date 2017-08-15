@@ -34,9 +34,6 @@ RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz \
     echo "rootsbindir=/sbin" >> configparms && \
     echo "build-programs=yes" >> configparms && \
     \
-    # Fix debian lib path weirdness
-    rm -rf /usr/include/${ARCH}-linux-gnu/c++ && \
-    \
     exec >/dev/null && \
     ../configure \
         --prefix= \
@@ -91,6 +88,11 @@ RUN for f in passwd shadow group profile; do \
     # Copy UTC localtime to output
     cp /usr/share/zoneinfo/Etc/UTC etc/
 
+# Generate initial ld.so.cache so ELF binaries work.
+# This is important otherwise everything will error with
+# 'no such file or directory' when looking for libraries
+RUN ${PREFIX}/sbin/ldconfig -r ${PREFIX}
+
 # =============
 
 FROM scratch
@@ -99,7 +101,5 @@ WORKDIR /
 COPY --from=builder /output/ /
 RUN mkdir -p /tmp && \
     chmod 1777 /tmp
-RUN ldconfig && \
-    ldconfig -p
 
 CMD ["/bin/sh"]
