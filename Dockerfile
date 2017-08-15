@@ -39,8 +39,8 @@ RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz \
     \
     exec >/dev/null && \
     ../configure \
-        --prefix=/ \
-        --libdir="/lib" \
+        --prefix= \
+        --libdir=/lib \
         --libexecdir=/lib \
         --enable-add-ons \
         --enable-obsolete-rpc \
@@ -67,9 +67,7 @@ RUN apt-get install -y file && \
     cp -d out/bin/ldd "${PREFIX}/bin" && \
     cp -d out/sbin/ldconfig "${PREFIX}/sbin" && \
     \
-    echo /usr/lib > "${PREFIX}/etc/ld.so.conf" && \
-    ldconfig -r "${PREFIX}" && \
-    ldconfig -r "${PREFIX}" -p
+    echo /usr/lib > "${PREFIX}/etc/ld.so.conf"
 
 WORKDIR /tmp/busybox
 
@@ -101,5 +99,7 @@ WORKDIR /
 COPY --from=builder /output/ /
 RUN mkdir -p /tmp && \
     chmod 1777 /tmp
+RUN ldconfig && \
+    ldconfig -p
 
 CMD ["/bin/sh"]
