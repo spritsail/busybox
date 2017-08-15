@@ -22,26 +22,26 @@ RUN curl -fL https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER
     curl -fL https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
     chmod +x sbin/su-exec sbin/tini
 
-WORKDIR /tmp/glibc
+WORKDIR /tmp/glibc/build
 
 # Download and build glibc from source
-RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz | tar xJ && \
-    mkdir -p glibc-build && cd glibc-build && \
+RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz \
+        | tar xJ --strip-components=1 -C .. && \
     \
     echo "slibdir=/lib" >> configparms && \
     echo "rtlddir=/lib" >> configparms && \
     echo "sbindir=/bin" >> configparms && \
-    echo "rootsbindir=/bin" >> configparms && \
+    echo "rootsbindir=/sbin" >> configparms && \
+    echo "build-programs=yes" >> configparms && \
     \
     # Fix debian lib path weirdness
     rm -rf /usr/include/${ARCH}-linux-gnu/c++ && \
-    ln -s /usr/include/${ARCH}-linux-gnu/* /usr/include && \
     \
-    ../glibc-${GLIBC_VER}/configure \
-        --prefix="$(pwd)/root" \
-        --libdir="$(pwd)/root/lib" \
+    exec >/dev/null && \
+    ../configure \
+        --prefix=/ \
+        --libdir="/lib" \
         --libexecdir=/lib \
-        --with-headers=/usr/include \
         --enable-add-ons \
         --enable-obsolete-rpc \
         --enable-kernel=3.10.0 \
@@ -53,12 +53,23 @@ RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz | tar xJ &&
         --enable-multi-arch \
         --disable-werror && \
     make -j "$(nproc)" && \
-    make install_root=$(pwd)/out install
+    make -j "$(nproc)" install_root="$(pwd)/out" install
 
-# Copy glibc libs & generate ld cache
-RUN cp -d glibc-build/out/lib/*.so "${PREFIX}/lib" && \
-    echo '/usr/lib' > "${PREFIX}/etc/ld.so.conf" && \
-    ldconfig -r "${PREFIX}"
+# Strip binaries to reduce their size
+RUN apt-get install -y file && \
+    find out/{s,}bin -exec file {} \; | grep -i elf \
+        | sed 's|^\(.*\):.*|\1|' | xargs strip -s && \
+    \
+    # Patch ldd to use sh not bash
+    sed -i '1s/.*/#!\/bin\/sh/' out/bin/ldd && \
+    # Copy glibc libs & generate ld cache
+    cp -d out/lib/*.so "${PREFIX}/lib" && \
+    cp -d out/bin/ldd "${PREFIX}/bin" && \
+    cp -d out/sbin/ldconfig "${PREFIX}/sbin" && \
+    \
+    echo /usr/lib > "${PREFIX}/etc/ld.so.conf" && \
+    ldconfig -r "${PREFIX}" && \
+    ldconfig -r "${PREFIX}" -p
 
 WORKDIR /tmp/busybox
 
