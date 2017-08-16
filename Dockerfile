@@ -12,10 +12,13 @@ ARG PREFIX=/output
 WORKDIR $PREFIX
 
 #Set up our dependencies, configure the output filesystem a bit
-RUN mkdir -p bin dev etc home lib proc root sbin tmp usr/bin usr/sbin usr/lib var && \
-    # This is probably only relevant on 64bit systems?
-    ln -sv usr/lib usr/lib64 && \
-    ln -sv lib lib64
+RUN mkdir -p dev etc home proc root tmp usr/{bin,lib,lib32} var && \
+    # Set up directories in a very confusing but very worky way
+    ln -sv usr/lib lib64 && \
+    ln -sv usr/lib lib && \
+    ln -sv usr/bin bin && \
+    ln -sv usr/bin sbin && \
+    ln -sv bin usr/sbin
 
 # Pull tini and su-exec utilities
 RUN curl -fL https://github.com/javabean/su-exec/releases/download/${SU_EXEC_VER}/su-exec.amd64 > sbin/su-exec && \
