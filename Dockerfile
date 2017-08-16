@@ -75,6 +75,7 @@ WORKDIR /tmp/busybox
 RUN curl -fL https://busybox.net/downloads/busybox-${BUSYB_VER}.tar.bz2 \
         | tar xj --strip-components=1 && \
     # Use default configuration
+    exec >/dev/null && \
     make defconfig && \
     make -j "$(nproc)" && \
     cp busybox "${PREFIX}/bin" && \
