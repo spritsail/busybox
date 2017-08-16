@@ -80,18 +80,12 @@ RUN curl -fL https://busybox.net/downloads/busybox-${BUSYB_VER}.tar.bz2 \
 
 WORKDIR $PREFIX
 
-# Add default skeleton configuration files
-RUN for f in passwd shadow group profile; do \
-        curl -fL -o "${PREFIX}/etc/$f" "https://git.busybox.net/buildroot/plain/system/skeleton/etc/$f"; \
-    done && \
-    \
-    # Copy UTC localtime to output
-    cp /usr/share/zoneinfo/Etc/UTC etc/
-
 # Generate initial ld.so.cache so ELF binaries work.
 # This is important otherwise everything will error with
 # 'no such file or directory' when looking for libraries
-RUN ${PREFIX}/sbin/ldconfig -r ${PREFIX}
+RUN ${PREFIX}/sbin/ldconfig -r ${PREFIX} && \
+    # Copy UTC localtime to output
+    cp /usr/share/zoneinfo/Etc/UTC etc/
 
 # =============
 
@@ -99,9 +93,11 @@ FROM scratch
 WORKDIR /
 
 COPY --from=builder /output/ /
-RUN mkdir -p /tmp && \
-    chmod 1777 /tmp
+# Add default skeleton configuration files
+ADD skel/* /etc/
+RUN chmod 1777 /tmp
 
+ENV ENV="/etc/profile"
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/bin 
 
 CMD ["/bin/sh"]
