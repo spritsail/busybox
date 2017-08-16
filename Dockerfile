@@ -31,17 +31,17 @@ WORKDIR /tmp/glibc/build
 RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz \
         | tar xJ --strip-components=1 -C .. && \
     \
-    echo "slibdir=/lib" >> configparms && \
-    echo "rtlddir=/lib" >> configparms && \
+    echo "slibdir=/usr/lib" >> configparms && \
+    echo "rtlddir=/usr/lib" >> configparms && \
     echo "sbindir=/bin" >> configparms && \
     echo "rootsbindir=/sbin" >> configparms && \
     echo "build-programs=yes" >> configparms && \
     \
     exec >/dev/null && \
     ../configure \
-        --prefix= \
-        --libdir=/lib \
-        --libexecdir=/lib \
+        --prefix=/usr \
+        --libdir=/usr/lib \
+        --libexecdir=/usr/lib \
         --enable-add-ons \
         --enable-obsolete-rpc \
         --enable-kernel=3.10.0 \
@@ -55,19 +55,15 @@ RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz \
     make -j "$(nproc)" && \
     make -j "$(nproc)" install_root="$(pwd)/out" install
 
-# Strip binaries to reduce their size
-RUN apt-get install -y file && \
-    find out/{s,}bin -exec file {} \; | grep -i elf \
-        | sed 's|^\(.*\):.*|\1|' | xargs strip -s && \
-    \
+RUN strip -s out/sbin/ldconfig && \
     # Patch ldd to use sh not bash
-    sed -i '1s/.*/#!\/bin\/sh/' out/bin/ldd && \
-    # Copy glibc libs & generate ld cache
-    cp -d out/lib/*.so "${PREFIX}/lib" && \
-    cp -d out/bin/ldd "${PREFIX}/bin" && \
+    sed -i '1s/.*/#!\/bin\/sh/' out/usr/bin/ldd && \
+    # Copy glibc libs & loader
+    cp -d out/usr/lib/*.so* "${PREFIX}/usr/lib" && \
+    cp -d out/usr/bin/ldd "${PREFIX}/bin" && \
     cp -d out/sbin/ldconfig "${PREFIX}/sbin" && \
     \
-    echo /usr/lib > "${PREFIX}/etc/ld.so.conf"
+    echo /usr/lib32 > "${PREFIX}/etc/ld.so.conf"
 
 WORKDIR /tmp/busybox
 
