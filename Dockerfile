@@ -105,4 +105,6 @@ COPY --from=builder /output/ /
 RUN mkdir -p /tmp && \
     chmod 1777 /tmp
 
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/bin 
+
 CMD ["/bin/sh"]
