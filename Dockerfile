@@ -58,6 +58,7 @@ RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz \
 RUN strip -s out/sbin/ldconfig && \
     # Patch ldd to use sh not bash
     sed -i '1s/.*/#!\/bin\/sh/' out/usr/bin/ldd && \
+    sed -i 's/lib64/lib/g' out/usr/bin/ldd && \
     # Copy glibc libs & loader
     cp -d out/usr/lib/*.so* "${PREFIX}/usr/lib" && \
     cp -d out/usr/bin/ldd "${PREFIX}/bin" && \
