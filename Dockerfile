@@ -37,7 +37,6 @@ RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz \
     echo "rootsbindir=/sbin" >> configparms && \
     echo "build-programs=yes" >> configparms && \
     \
-    exec >/dev/null && \
     ../configure \
         --prefix=/usr \
         --libdir=/usr/lib \
@@ -72,7 +71,6 @@ WORKDIR /tmp/busybox
 RUN curl -fL https://busybox.net/downloads/busybox-${BUSYB_VER}.tar.bz2 \
         | tar xj --strip-components=1 && \
     # Use default configuration
-    exec >/dev/null && \
     make defconfig && \
     make -j "$(nproc)" && \
     cp busybox "${PREFIX}/bin" && \
