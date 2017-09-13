@@ -36,6 +36,8 @@ pipeline:
   
   downstream:
     image: plugins/downstream
+    when:
+      event: [push, tag, deployment]
     secrets: [ DOWNSTREAM_TOKEN ]
     server: https://drone.adam-ant.co.uk
     fork: true
