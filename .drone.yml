@@ -1,38 +1,36 @@
-services:
-  docker:
-    image: docker:dind
-    privileged: true
-
 pipeline:
   build:
     image: docker
-    environment:
-      - DOCKER_HOST=tcp://docker:2375
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - docker build -t devbuild .
+      - docker build --no-cache --pull -t busybox-dev .
 
   test:
     image: docker
-    environment:
-      - DOCKER_HOST=tcp://docker:2375
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     commands:
-      - docker run --rm devbuild /bin/sh -xec 'true'
-      - docker run --rm devbuild /bin/sh -xec 'test -f /lib/libc-*.so'
-      - docker run --rm devbuild /bin/sh -xec 'ldconfig -p'
-      - docker run --rm devbuild /bin/sh -xec 'nslookup google.com'
+      - docker run --rm busybox-dev /bin/sh -xec 'true'
+      - docker run --rm busybox-dev /bin/sh -xec 'test -f /lib/libc-*.so'
+      - docker run --rm busybox-dev /bin/sh -xec 'ldconfig -p'
+      - docker run --rm busybox-dev /bin/sh -xec 'nslookup google.com'
       - test "$(docker run --rm devbuild /bin/sh -xec 'date +%Z')" = 'UTC'
       - test "$(docker run --rm devbuild /bin/sh -xec 'echo This is a test string | md5sum | cut -f1 -d\ ' | tee /dev/stderr)" = 'b584c39f97dfe71ebceea3fdb860ed6c'
 
   publish:
     image: docker
     secrets: [ DOCKER_USER, DOCKER_PASS ]
-    environment:
-      - DOCKER_HOST=tcp://docker:2375
+    when:
+      event: [push, tag, deployment]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - docker tag devbuild adamant/busybox:latest
-      - docker tag devbuild adamant/busybox:1.1
+      - docker tag busybox-dev adamant/busybox:latest
+      - docker tag busybox-dev adamant/busybox:1.1
       - docker push adamant/busybox
+      - docker rmi busybox-dev adamant/busybox
   
   downstream:
     image: plugins/downstream
