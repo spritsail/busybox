@@ -15,8 +15,8 @@ pipeline:
       - docker run --rm busybox-dev /bin/sh -xec 'test -f /lib/libc-*.so'
       - docker run --rm busybox-dev /bin/sh -xec 'ldconfig -p'
       - docker run --rm busybox-dev /bin/sh -xec 'nslookup google.com'
-      - test "$(docker run --rm devbuild /bin/sh -xec 'date +%Z')" = 'UTC'
-      - test "$(docker run --rm devbuild /bin/sh -xec 'echo This is a test string | md5sum | cut -f1 -d\ ' | tee /dev/stderr)" = 'b584c39f97dfe71ebceea3fdb860ed6c'
+      - test "$(docker run --rm busybox-dev /bin/sh -xec 'date +%Z')" = 'UTC'
+      - test "$(docker run --rm busybox-dev /bin/sh -xec 'echo This is a test string | md5sum | cut -f1 -d\ ' | tee /dev/stderr)" = 'b584c39f97dfe71ebceea3fdb860ed6c'
 
   publish:
     image: docker
