@@ -12,7 +12,7 @@ ARG PREFIX=/output
 WORKDIR $PREFIX
 
 #Set up our dependencies, configure the output filesystem a bit
-RUN mkdir -p dev etc home proc root tmp usr/{bin,lib,lib32} var && \
+RUN mkdir -p dev etc home proc root tmp usr/{bin,lib/pkgconfig,lib32} var && \
     # Set up directories in a very confusing but very worky way
     ln -sv usr/lib lib64 && \
     ln -sv usr/lib lib && \
