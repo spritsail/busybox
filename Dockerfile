@@ -3,8 +3,8 @@ FROM frebib/debian-builder as builder
 ARG ARCH=x86_64
 ARG ARCH_ALT=i686
 
-ARG GLIBC_VER=2.26
-ARG BUSYB_VER=1.27.2
+ARG GLIBC_VER=2.27
+ARG BUSYB_VER=1.28.0
 ARG SU_EXEC_VER=v0.3
 ARG TINI_VER=v0.16.1
 
@@ -28,7 +28,8 @@ RUN curl -fL https://github.com/frebib/su-exec/releases/download/${SU_EXEC_VER}/
 WORKDIR /tmp/glibc/build
 
 # Download and build glibc from source
-RUN curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz \
+RUN apt install -y bison && \
+    curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz \
         | tar xJ --strip-components=1 -C .. && \
     \
     echo "slibdir=/usr/lib" >> configparms && \
