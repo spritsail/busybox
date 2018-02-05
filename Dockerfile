@@ -97,6 +97,9 @@ COPY --from=builder /output/ /
 ADD skel/* /etc/
 RUN chmod 1777 /tmp
 
+ADD https://gist.githubusercontent.com/frebib/2b4ba154a9d62b31b1edcb50477e7f01/raw/647c3f8ee4dc7e325cd41f40fe47735f75a7f607/ppwd.sh /usr/bin/ppwd
+RUN chmod 755 /usr/bin/ppwd
+
 ENV ENV="/etc/profile"
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/bin 
 

@@ -1,6 +1,6 @@
 export PAGER='/bin/less -R'
 export EDITOR='/bin/vi'
-export PS1='\u@\h \w> '
+export PS1='\e[1;36m\u@\h\e[0m \e[0;32m$(ppwd)\e[0m> '
 
 # Source configuration files from /etc/profile.d
 for i in /etc/profile.d/*.sh ; do
@@ -18,3 +18,5 @@ alias la='ls -la'
 alias cp='cp -i'
 alias mv='mv -i'
 alias rm='rm -i'
+alias md='mkdir'
+alias dd='rmdir'
