@@ -1,15 +1,12 @@
 pipeline:
   build:
-    image: docker
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    commands:
-      - docker build --no-cache --pull -t busybox-dev .
+    image: spritsail/docker-build
+    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
+    repo: busybox-dev
 
   test:
     image: docker
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
     commands:
       - docker run --rm busybox-dev /bin/sh -xec 'true'
       - docker run --rm busybox-dev /bin/sh -xec 'test -f /lib/libc-*.so'
@@ -19,28 +16,26 @@ pipeline:
       - test "$(docker run --rm busybox-dev /bin/sh -xec 'echo This is a test string | md5sum | cut -f1 -d\ ' | tee /dev/stderr)" = 'b584c39f97dfe71ebceea3fdb860ed6c'
 
   publish:
-    image: docker
-    secrets: [ DOCKER_USER, DOCKER_PASS ]
-    when:
-      event: [push, tag, deployment]
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    commands:
-      - docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - docker tag busybox-dev adamant/busybox:latest
-      - docker tag busybox-dev adamant/busybox:1.1
-      - docker push adamant/busybox
-      - docker rmi busybox-dev adamant/busybox
-  
+    image: spritsail/docker-publish
+    when: { branch: [ master ], event: [ push, tag, deployment ] }
+    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
+    secrets: [ docker_username, docker_password, microbadger_token ]
+    from: busybox-dev
+    repo: spritsail/busybox
+
   downstream:
     image: plugins/downstream
-    when:
-      event: [push, tag, deployment]
-    secrets: [ DOWNSTREAM_TOKEN ]
-    server: https://drone.adam-ant.co.uk
+    when: { status: [ success ], event: [ push, tag, deployment ] }
+    secrets: [ downstream_token ]
+    server: https://drone.spritsail.io
     fork: true
     repositories:
-      - Adam-Ant/docker-busybox@libressl
-    when:
-      event:  [ push, tag, deployment]
-      status: [ success ]
+      - spritsail/busybox@libressl
+
+  notify:
+    image: appleboy/drone-telegram
+    when: { status: [ success, failure ] }
+    secrets: [ telegram_token, telegram_to ]
+    message: |
+      *{{repo.owner}}/{{repo.name}} [{{commit.branch}}]*: Build #{{build.number}}: *{{uppercase build.status}}*
+      {{build.link}}

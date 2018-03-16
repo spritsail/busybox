@@ -1,12 +1,12 @@
-FROM frebib/debian-builder as builder
+FROM spritsail/debian-builder as builder
 
 ARG ARCH=x86_64
 ARG ARCH_ALT=i686
 
 ARG GLIBC_VER=2.27
-ARG BUSYB_VER=1.28.0
+ARG BUSYB_VER=1.28.1
 ARG SU_EXEC_VER=v0.3
-ARG TINI_VER=v0.16.1
+ARG TINI_VER=v0.17.0
 
 ARG PREFIX=/output
 WORKDIR $PREFIX

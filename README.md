@@ -1,9 +1,16 @@
-[hub]: https://hub.docker.com/r/adamant/busybox
+[hub]: https://hub.docker.com/r/spritsail/busybox
+[git]: https://github.com/spritsail/busybox
+[drone]: https://drone.spritsail.io/spritsail/busybox
 [musl]: https://www.musl-libc.org/
 [uclibc]: https://www.uclibc.org/
 
-# [adamant/busybox][hub] - A tiny image, nurtured from source
-[![](https://images.microbadger.com/badges/image/adamant/busybox.svg)](https://microbadger.com/images/adamant/busybox) [![](https://images.microbadger.com/badges/version/adamant/busybox.svg)][hub] [![Docker Stars](https://img.shields.io/docker/stars/adamant/busybox.svg)][hub] [![Docker Pulls](https://img.shields.io/docker/pulls/adamant/busybox.svg)][hub]
+# [spritsail/busybox][hub] - A tiny image, nurtured from source
+[![](https://images.microbadger.com/badges/image/spritsail/busybox.svg)](https://microbadger.com/images/spritsail/busybox)
+[![](https://images.microbadger.com/badges/version/spritsail/busybox.svg)][hub]
+[![](https://images.microbadger.com/badges/commit/spritsail/busybox.svg)][git]
+[![Docker Stars](https://img.shields.io/docker/stars/spritsail/busybox.svg)][hub]
+[![Docker Pulls](https://img.shields.io/docker/pulls/spritsail/busybox.svg)][hub]
+[![Build Status](https://drone.spritsail.io/api/badges/spritsail/busybox/status.svg)][drone]
 
 This Docker base image has been custom crafted from source to provide just enough functionality in the tiniest footprint. Included in the image are the following:
  - GNU libc6 (glibc) - _C standard library, found in most linux distributions_ | https://www.gnu.org/software/libc/
@@ -11,15 +18,15 @@ This Docker base image has been custom crafted from source to provide just enoug
  - LibreSSL - _An OpenSSL fork aiming to modernise code and improve security_ | https://www.libressl.org/
 
 Additionally, the following small utilities have been included for convenience and good container practice:
- - su-exec - _A convenient utility for changing user and dropping privilege_ | https://github.com/ncopa/su-exec
+ - su-exec - _A convenient utility for changing user and dropping privilege_ | https://github.com/frebib/su-exec
  - tini - _A tiny but valid `init` for containers_ | https://github.com/krallin/tini
 
 ## Supported tags and respective `Dockerfile` links
 
 There are two main streams of this image: with and without LibreSSL. You can find the dockerfiles below
 
-* `1.0`, `latest` - [(master/dockerfile)](https://github.com/Adam-Ant/docker-busybox/blob/master/Dockerfile)
-* `1.0-libressl`, `libressl` - [(libressl/dockerfile)](https://github.com/Adam-Ant/docker-busybox/blob/libressl/Dockerfile)
+* `1.0`, `latest` - [(master/dockerfile)](https://github.com/spritsail/busybox/blob/master/Dockerfile)
+* `1.0-libressl`, `libressl` - [(libressl/dockerfile)](https://github.com/spritsail/busybox/blob/libressl/Dockerfile)
 
 ## Goals for a base image
 
