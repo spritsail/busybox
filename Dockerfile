@@ -1,12 +1,18 @@
+# Pre-define ARGs to ensure correct scope
+ARG GLIBC_VER=2.27
+ARG BUSYB_VER=1.28.1
+ARG SU_EXEC_VER=v0.3
+ARG TINI_VER=v0.17.0
+
 FROM spritsail/debian-builder as builder
 
 ARG ARCH=x86_64
 ARG ARCH_ALT=i686
 
-ARG GLIBC_VER=2.27
-ARG BUSYB_VER=1.28.1
-ARG SU_EXEC_VER=v0.3
-ARG TINI_VER=v0.17.0
+ARG GLIBC_VER
+ARG BUSYB_VER
+ARG SU_EXEC_VER
+ARG TINI_VER
 
 ARG PREFIX=/output
 WORKDIR $PREFIX
@@ -90,6 +96,17 @@ RUN ${PREFIX}/sbin/ldconfig -r ${PREFIX} && \
 # =============
 
 FROM scratch
+
+ARG BUSYB_VER
+ARG GLIBC_VER
+
+LABEL maintainer="Spritsail <busybox@spritsail.io>" \
+      org.label-schema.vendor="Spritsail" \
+      org.label-schema.name="Busybox" \
+      org.label-schema.url="https://github.com/spritsail/busybox" \
+      org.label-schema.description="Busybox and GNU libc built from source" \
+      org.label-schema.version=${BUSYB_VER}/${GLIBC_VER}
+
 WORKDIR /
 
 COPY --from=builder /output/ /
