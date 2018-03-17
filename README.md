@@ -1,13 +1,14 @@
 [hub]: https://hub.docker.com/r/spritsail/busybox
 [git]: https://github.com/spritsail/busybox
 [drone]: https://drone.spritsail.io/spritsail/busybox
+[mbdg]: https://microbadger.com/images/spritsail/busybox
 [musl]: https://www.musl-libc.org/
 [uclibc]: https://www.uclibc.org/
 
 # [spritsail/busybox][hub] - A tiny image, nurtured from source
-[![](https://images.microbadger.com/badges/image/spritsail/busybox.svg)](https://microbadger.com/images/spritsail/busybox)
-[![](https://images.microbadger.com/badges/version/spritsail/busybox.svg)][hub]
-[![](https://images.microbadger.com/badges/commit/spritsail/busybox.svg)][git]
+[![](https://images.microbadger.com/badges/image/spritsail/busybox.svg)][mbdg]
+[![Latest Version](https://images.microbadger.com/badges/version/spritsail/busybox.svg)][hub]
+[![Git Commit](https://images.microbadger.com/badges/commit/spritsail/busybox.svg)][git]
 [![Docker Stars](https://img.shields.io/docker/stars/spritsail/busybox.svg)][hub]
 [![Docker Pulls](https://img.shields.io/docker/pulls/spritsail/busybox.svg)][hub]
 [![Build Status](https://drone.spritsail.io/api/badges/spritsail/busybox/status.svg)][drone]
