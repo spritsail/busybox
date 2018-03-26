@@ -99,13 +99,19 @@ FROM scratch
 
 ARG BUSYB_VER
 ARG GLIBC_VER
+ARG SU_EXEC_VER
+ARG TINI_VER
 
 LABEL maintainer="Spritsail <busybox@spritsail.io>" \
       org.label-schema.vendor="Spritsail" \
       org.label-schema.name="Busybox" \
       org.label-schema.url="https://github.com/spritsail/busybox" \
       org.label-schema.description="Busybox and GNU libc built from source" \
-      org.label-schema.version=${BUSYB_VER}/${GLIBC_VER}
+      org.label-schema.version=${BUSYB_VER}/${GLIBC_VER} \
+      io.spritsail.version.busybox=${BUSYB_VER} \
+      io.spritsail.version.glibc=${GLIBC_VER} \
+      io.spritsail.version.su-exec=${SU_EXEC_VER} \
+      io.spritsail.version.tini=${TINI_VER}
 
 WORKDIR /
 
