@@ -28,6 +28,7 @@ pipeline:
     when: { status: [ success ], event: [ push, tag, deployment ] }
     secrets: [ downstream_token ]
     server: https://drone.spritsail.io
+    wait: true
     fork: true
     repositories:
       - spritsail/busybox@libressl
