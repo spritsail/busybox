@@ -115,6 +115,8 @@ LABEL maintainer="Spritsail <busybox@spritsail.io>" \
 
 WORKDIR /
 
+SHELL ["/bin/sh", "-exc"]
+
 COPY --from=builder /output/ /
 # Add default skeleton configuration files
 ADD skel/* /etc/
@@ -126,4 +128,5 @@ RUN chmod 755 /usr/bin/ppwd
 ENV ENV="/etc/profile"
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/bin 
 
+ENTRYPOINT ["/sbin/tini" , "--"]
 CMD ["/bin/sh"]
