@@ -23,20 +23,7 @@ pipeline:
     from: busybox-dev
     repo: spritsail/busybox
 
-  downstream:
-    image: plugins/downstream
-    when: { status: [ success ], event: [ push, tag, deployment ] }
-    secrets: [ downstream_token ]
-    server: https://drone.spritsail.io
-    wait: true
-    fork: true
-    repositories:
-      - spritsail/busybox@libressl
-
   notify:
-    image: appleboy/drone-telegram
+    image: spritsail/notify
     when: { status: [ success, failure ] }
-    secrets: [ telegram_token, telegram_to ]
-    message: |
-      *{{repo.owner}}/{{repo.name}} [{{commit.branch}}]*: Build #{{build.number}}: *{{uppercase build.status}}*
-      {{build.link}}
+    secrets: [ webhook_url, notify_token ]
