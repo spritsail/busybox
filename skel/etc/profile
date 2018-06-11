@@ -1,5 +1,5 @@
-export PAGER='/bin/less -R'
-export EDITOR='/bin/vi'
+export PAGER='/usr/bin/less -R'
+export EDITOR='/usr/bin/vi'
 export PS1='\e[1;36m\u@\h\e[0m \e[0;32m$(ppwd)\e[0m> '
 
 # Source configuration files from /etc/profile.d
