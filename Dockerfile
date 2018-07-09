@@ -1,6 +1,6 @@
 # Pre-define ARGs to ensure correct scope
 ARG GLIBC_VER=2.27
-ARG BUSYB_VER=1.28.4
+ARG BUSYB_VER=1.29.0
 ARG SU_EXEC_VER=v0.3
 ARG TINI_VER=v0.18.0
 
@@ -124,7 +124,7 @@ RUN chmod 1777 /tmp && \
     chmod u+s /usr/bin/ping /usr/bin/su
 
 ENV ENV="/etc/profile"
-ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/bin 
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/bin
 
 ENTRYPOINT ["/sbin/tini" , "--"]
 CMD ["/bin/sh"]
