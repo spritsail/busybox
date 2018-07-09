@@ -1,8 +1,8 @@
 # Pre-define ARGs to ensure correct scope
 ARG GLIBC_VER=2.27
 ARG BUSYB_VER=1.29.0
-ARG SU_EXEC_VER=v0.3
-ARG TINI_VER=v0.18.0
+ARG SU_EXEC_VER=0.3
+ARG TINI_VER=0.18.0
 
 FROM spritsail/debian-builder as builder
 
@@ -27,8 +27,8 @@ RUN mkdir -p dev etc home proc root tmp usr/{bin,lib/pkgconfig,lib32} var && \
     ln -sv bin usr/sbin
 
 # Pull tini and su-exec utilities
-RUN curl -fL https://github.com/frebib/su-exec/releases/download/${SU_EXEC_VER}/su-exec-x86_64 > sbin/su-exec && \
-    curl -fL https://github.com/krallin/tini/releases/download/${TINI_VER}/tini-amd64 > sbin/tini && \
+RUN curl -fL https://github.com/frebib/su-exec/releases/download/v${SU_EXEC_VER}/su-exec-x86_64 > sbin/su-exec && \
+    curl -fL https://github.com/krallin/tini/releases/download/v${TINI_VER}/tini-amd64 > sbin/tini && \
     chmod +x sbin/su-exec sbin/tini
 
 WORKDIR /tmp/glibc/build
