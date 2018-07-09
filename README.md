@@ -6,7 +6,7 @@
 [uclibc]: https://www.uclibc.org/
 
 # [spritsail/busybox][hub] - A tiny image, nurtured from source
-[![](https://images.microbadger.com/badges/image/spritsail/busybox.svg)][mbdg]
+[![Layers](https://images.microbadger.com/badges/image/spritsail/busybox.svg)][mbdg]
 [![Latest Version](https://images.microbadger.com/badges/version/spritsail/busybox.svg)][hub]
 [![Git Commit](https://images.microbadger.com/badges/commit/spritsail/busybox.svg)][git]
 [![Docker Stars](https://img.shields.io/docker/stars/spritsail/busybox.svg)][hub]
