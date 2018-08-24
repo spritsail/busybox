@@ -24,7 +24,7 @@ pipeline:
     repo: spritsail/busybox
     tags:
       - 'latest'
-      - '%label: io.spritsail.version.busybox'
+      - '%label io.spritsail.version.busybox'
 
   notify:
     image: spritsail/notify
