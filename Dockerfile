@@ -26,11 +26,6 @@ RUN mkdir -p dev etc home proc root tmp usr/{bin,lib/pkgconfig,lib32} var && \
     ln -sv usr/bin sbin && \
     ln -sv bin usr/sbin
 
-# Pull tini and su-exec utilities
-RUN curl -fL https://github.com/frebib/su-exec/releases/download/v${SU_EXEC_VER}/su-exec-x86_64 > sbin/su-exec && \
-    curl -fL https://github.com/krallin/tini/releases/download/v${TINI_VER}/tini-amd64 > sbin/tini && \
-    chmod +x sbin/su-exec sbin/tini
-
 WORKDIR /tmp/glibc/build
 
 # Download and build glibc from source
@@ -83,6 +78,27 @@ RUN curl -fL https://busybox.net/downloads/busybox-${BUSYB_VER}.tar.bz2 \
     cp busybox "${PREFIX}/bin" && \
     # "Install" busybox, creating symlinks to all binaries it provides
     ./busybox --list-full | xargs -i ln -s /bin/busybox "${PREFIX}/{}"
+
+WORKDIR /tmp/su-exec
+
+# Download and build su-exec from source
+RUN apt-get -y install xxd
+RUN curl -fL https://github.com/frebib/su-exec/archive/v${SU_EXEC_VER}.tar.gz \
+        | tar xz --strip-components=1 && \
+    make && \
+    strip -s su-exec && \
+    mv su-exec "${PREFIX}/sbin"
+
+WORKDIR /tmp/tini
+
+# Download and build tini from source
+ADD tini-gnudef.patch /tmp
+RUN curl -fL https://github.com/krallin/tini/archive/v${TINI_VER}.tar.gz \
+        | tar xz --strip-components=1 && \
+    patch -p1 < /tmp/tini-gnudef.patch && \
+    cmake . && \
+    make tini && \
+    mv tini "${PREFIX}/sbin"
 
 WORKDIR $PREFIX
 
