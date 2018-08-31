@@ -1,6 +1,6 @@
 export PAGER='/usr/bin/less'
 export EDITOR='/usr/bin/vi'
-export PS1='\e[1;36m\u@\h\e[0m \e[0;32m$(pwd | sed -E '"'s|^'\$HOME'|~|;s|(.*)/|\\1%#|;s|((^\\|/)\\.?[^/%]{1})[^/%]*|\\1|g;s|(.*)%#|\\1/|')"'\e[0m> '
+export PS1='\e[1;36m\u@\h\e[0m \e[0;32m$(pwd | sed -E '"'s@^'\$HOME'@~@;s@(.*)/@\\1%#@;s@((^|/)\\.?[^/%]{1})[^/%]*@\\1@g;s@(.*)%#@\\1/@')"'\e[0m> '
 
 # Source configuration files from /etc/profile.d
 for i in /etc/profile.d/*.sh ; do
