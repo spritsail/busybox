@@ -109,6 +109,11 @@ RUN ${PREFIX}/sbin/ldconfig -r ${PREFIX} && \
     # Copy UTC localtime to output
     cp /usr/share/zoneinfo/Etc/UTC etc/
 
+# Add default skeleton configuration files
+COPY skel/ .
+RUN install -dm 1777 tmp && \
+    chroot . chmod 775 usr/bin/* sbin/*
+
 # =============
 
 FROM scratch
@@ -134,10 +139,6 @@ WORKDIR /
 SHELL ["/bin/sh", "-exc"]
 
 COPY --from=builder /output/ /
-# Add default skeleton configuration files
-COPY skel/ /
-RUN chmod 1777 /tmp && \
-    chmod 775 /usr/bin/*
 
 ENV ENV="/etc/profile"
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/bin
