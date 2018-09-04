@@ -137,7 +137,7 @@ COPY --from=builder /output/ /
 # Add default skeleton configuration files
 COPY skel/ /
 RUN chmod 1777 /tmp && \
-    chmod u+s /usr/bin/ping /usr/bin/su
+    chmod 775 /usr/bin/*
 
 ENV ENV="/etc/profile"
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/bin
