@@ -72,8 +72,25 @@ WORKDIR /tmp/busybox
 # Download and build busybox from source
 RUN curl -fL https://busybox.net/downloads/busybox-${BUSYB_VER}.tar.bz2 \
         | tar xj --strip-components=1 && \
+    # Use minimal configuration for standalone applets
+    make allnoconfig && \
+    sed -i -e 's/# CONFIG_PING is not set/CONFIG_PING=y/' \
+           -e 's/# CONFIG_FEATURE_FANCY_PING is not set/CONFIG_FEATURE_FANCY_PING=y/' \
+           -e 's/# CONFIG_SU is not set/CONFIG_SU=y/' \
+        .config && \
+    # Build ping and su
+    ./make_single_applets.sh && \
+    cp busybox_PING "${PREFIX}/bin/ping" && \
+    cp busybox_SU "${PREFIX}/bin/su" && \
+    \
     # Use default configuration
     make defconfig && \
+    # Disable `busybox --install` function
+    sed -i -e 's/CONFIG_INSTALLER=y/# CONFIG_INSTALLER is not set/' \
+           -e 's/CONFIG_PING=y/# CONFIG_PING is not set/' \
+           -e 's/CONFIG_SU=y/# CONFIG_SU is not set/' \
+        .config && \
+    \
     make -j "$(nproc)" && \
     cp busybox "${PREFIX}/bin" && \
     # "Install" busybox, creating symlinks to all binaries it provides
@@ -112,7 +129,9 @@ RUN ${PREFIX}/sbin/ldconfig -r ${PREFIX} && \
 # Add default skeleton configuration files
 COPY skel/ .
 RUN install -dm 1777 tmp && \
-    chroot . chmod 775 usr/bin/* sbin/*
+    chroot . chmod 755 usr/bin/* sbin/* && \
+    # Ensure ping and su have correct permissions
+    chroot . chmod 4755 usr/bin/ping usr/bin/su
 
 # =============
 
@@ -139,6 +158,8 @@ WORKDIR /
 SHELL ["/bin/sh", "-exc"]
 
 COPY --from=builder /output/ /
+# Workaround for Docker bug (not retaining setuid bit)
+RUN chmod 4755 usr/bin/ping usr/bin/su
 
 ENV ENV="/etc/profile"
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/bin
