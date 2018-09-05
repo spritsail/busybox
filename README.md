@@ -22,18 +22,11 @@ Additionally, the following small utilities have been included for convenience a
  - su-exec - _A convenient utility for changing user and dropping privilege_ | https://github.com/frebib/su-exec
  - tini - _A tiny but valid `init` for containers_ | https://github.com/krallin/tini
 
-## Supported tags and respective `Dockerfile` links
-
-There are two main streams of this image: with and without LibreSSL. You can find the dockerfiles below
-
-* `1.0`, `latest` - [(master/dockerfile)](https://github.com/spritsail/busybox/blob/master/Dockerfile)
-* `1.0-libressl`, `libressl` - [(libressl/dockerfile)](https://github.com/spritsail/busybox/blob/libressl/Dockerfile)
-
 ## Goals for a base image
 
 Occasionally there are opportunities where alternative standard libc implementations ([musl][musl]/[uclibc][uclibc]) won't do, like in the case of [proprietary](http://i.imgur.com/V5K7N1I.jpg) software like [Plex Media Server](https://www.plex.tv/downloads/) where only pre-compiled binaries are provided which were built against the common glibc library.
 
-(_If your use-case doesn't require glibc and you can compile the program from source, we strongly recommend you use the [Alpine Linux](https://hub.docker.com/\_/alpine) image, based on musl, which is smaller and features a full packaging system_)
+(_If your use-case doesn't require glibc and you can compile the program from source, we strongly recommend you use the [Alpine Linux](https://github.com/spritsail/alpine) image, based on musl, which is smaller and features a full packaging system_)
 
 - The image had to be _small_, whilst still being fully functional
 - It should contain a full GNU glibc implementation to support pre-compiled binaries
