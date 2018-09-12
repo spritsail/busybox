@@ -159,6 +159,7 @@ SHELL ["/bin/sh", "-exc"]
 
 COPY --from=builder /output/ /
 # Workaround for Docker bug (not retaining setuid bit)
+# https://github.com/moby/moby/issues/37830
 RUN chmod 4755 usr/bin/ping usr/bin/su
 
 ENV ENV="/etc/profile"
