@@ -6,9 +6,6 @@ ARG TINI_VER=0.18.0
 
 FROM spritsail/debian-builder as builder
 
-ARG ARCH=x86_64
-ARG ARCH_ALT=i686
-
 ARG GLIBC_VER
 ARG BUSYB_VER
 ARG SU_EXEC_VER
