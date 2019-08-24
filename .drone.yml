@@ -1,32 +1,65 @@
-pipeline:
-  build:
-    image: spritsail/docker-build
-    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  pull: always
+  image: spritsail/docker-build
+  settings:
     repo: busybox-dev
 
-  test:
-    image: docker
-    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
-    commands:
-      - docker run --rm busybox-dev /bin/sh -xec 'true'
-      - docker run --rm busybox-dev /bin/sh -xec 'test -f /lib/libc-*.so'
-      - docker run --rm busybox-dev /bin/sh -xec 'ldconfig -p'
-      - docker run --rm busybox-dev /bin/sh -xec 'nslookup google.com'
-      - test "$(docker run --rm busybox-dev /bin/sh -xec 'date +%Z')" = 'UTC'
-      - test "$(docker run --rm busybox-dev /bin/sh -xec 'echo This is a test string | md5sum | cut -f1 -d\ ' | tee /dev/stderr)" = 'b584c39f97dfe71ebceea3fdb860ed6c'
+- name: test
+  pull: never
+  image: busybox-dev
+  commands:
+  - true
+  - test -f /lib/libc-*.so
+  - ldconfig -p
+  - nslookup google.com
+  - test "$(date +%Z)" = 'UTC'
+  - test "$(echo This is a test string | md5sum | cut -f1 -d' ' | tee /dev/stderr)" = 'b584c39f97dfe71ebceea3fdb860ed6c'
 
-  publish:
-    image: spritsail/docker-publish
-    when: { branch: [ master ], event: [ push, tag, deployment ] }
-    volumes: [ '/var/run/docker.sock:/var/run/docker.sock' ]
-    secrets: [ docker_username, docker_password, microbadger_token ]
+- name: publish
+  pull: always
+  image: spritsail/docker-publish
+  settings:
     from: busybox-dev
     repo: spritsail/busybox
     tags:
-      - 'latest'
-      - '%label io.spritsail.version.busybox'
+    - latest
+    - "%label io.spritsail.version.busybox"
+  environment:
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+    DOCKER_USERNAME:
+      from_secret: docker_username
+  when:
+    branch:
+    - master
+    event:
+    - push
+    - tag
 
-  notify:
-    image: spritsail/notify
-    when: { status: [ success, failure ] }
-    secrets: [ webhook_url, notify_token ]
+- name: notify
+  pull: always
+  image: spritsail/notify
+  environment:
+    NOTIFY_TOKEN:
+      from_secret: notify_token
+    WEBHOOK_URL:
+      from_secret: webhook_url
+  when:
+    status:
+    - success
+    - failure
+
+---
+kind: signature
+hmac: f58eb966c4ca55c7f0c4aefeec0f246ea7190beabf7e017e495d2eb6e290def6
+
+...
