@@ -1,6 +1,6 @@
 # Pre-define ARGs to ensure correct scope
 ARG GLIBC_VER=2.29
-ARG BUSYB_VER=1.31.0
+ARG BUSYB_VER=1.30.1
 ARG SU_EXEC_VER=0.4
 ARG TINI_VER=0.18.0
 
