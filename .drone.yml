@@ -31,8 +31,7 @@ steps:
     from: busybox-dev
     repo: spritsail/busybox
     tags:
-    - latest
-    - "%label io.spritsail.version.busybox"
+    - beta
   environment:
     DOCKER_PASSWORD:
       from_secret: docker_password
