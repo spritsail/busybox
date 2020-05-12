@@ -33,33 +33,18 @@ steps:
     tags:
     - latest
     - "%label io.spritsail.version.busybox"
-  environment:
-    DOCKER_PASSWORD:
-      from_secret: docker_password
-    DOCKER_USERNAME:
+    username:
       from_secret: docker_username
+    password:
+      from_secret: docker_password
   when:
     branch:
     - master
     event:
     - push
-    - tag
-
-- name: notify
-  pull: always
-  image: spritsail/notify
-  environment:
-    NOTIFY_TOKEN:
-      from_secret: notify_token
-    WEBHOOK_URL:
-      from_secret: webhook_url
-  when:
-    status:
-    - success
-    - failure
 
 ---
 kind: signature
-hmac: f58eb966c4ca55c7f0c4aefeec0f246ea7190beabf7e017e495d2eb6e290def6
+hmac: d30c74969375fb412dd5161613172be1fa834d76f8934866a76ddd69043b975e
 
 ...
