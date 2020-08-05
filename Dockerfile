@@ -1,6 +1,6 @@
 # Pre-define ARGs to ensure correct scope
 ARG GLIBC_VER=2.31
-ARG BUSYB_VER=1.31.1
+ARG BUSYB_VER=1.32.0
 ARG SU_EXEC_VER=0.4
 ARG TINI_VER=0.19.0
 
@@ -26,7 +26,8 @@ RUN mkdir -p dev etc home proc root tmp usr/{bin,lib/pkgconfig,lib32} var && \
 WORKDIR /tmp/glibc/build
 
 # Download and build glibc from source
-RUN apt install -y bison python3 && \
+RUN apt-get -y update && \
+    apt-get -y install bison python3 && \
     curl -fL https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.xz \
         | tar xJ --strip-components=1 -C .. && \
     \
