@@ -1,5 +1,5 @@
 # Pre-define ARGs to ensure correct scope
-ARG GLIBC_VER=2.31
+ARG GLIBC_VER=2.32
 ARG BUSYB_VER=1.32.0
 ARG SU_EXEC_VER=0.4
 ARG TINI_VER=0.19.0
@@ -42,14 +42,15 @@ RUN apt-get -y update && \
         --libdir=/usr/lib \
         --libexecdir=/usr/lib \
         --enable-add-ons \
-        --enable-obsolete-rpc \
-        --enable-kernel=3.10.0 \
         --enable-bind-now \
-        --disable-profile \
-        --enable-stackguard-randomization \
-        --enable-stack-protector=strong \
+        --enable-cet \
+        --enable-kernel=4.19 \
         --enable-lock-elision \
         --enable-multi-arch \
+        --enable-stack-protector=strong \
+        --enable-stackguard-randomization \
+        --disable-crypt \
+        --disable-profile \
         --disable-werror && \
     make -j "$(nproc)" && \
     make -j "$(nproc)" install_root="$(pwd)/out" install
