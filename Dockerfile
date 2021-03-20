@@ -44,12 +44,12 @@ RUN apt-get -y update && \
         --enable-add-ons \
         --enable-bind-now \
         --enable-cet \
+        --enable-crypt \
         --enable-kernel=4.19 \
         --enable-lock-elision \
         --enable-multi-arch \
         --enable-stack-protector=strong \
         --enable-stackguard-randomization \
-        --disable-crypt \
         --disable-profile \
         --disable-werror && \
     make -j "$(nproc)" && \
