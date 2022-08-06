@@ -1,5 +1,5 @@
 # Pre-define ARGs to ensure correct scope
-ARG GLIBC_VER=2.35
+ARG GLIBC_VER=2.36
 ARG BUSYB_VER=1.35.0
 ARG SU_EXEC_VER=0.4
 ARG TINI_VER=0.19.0
@@ -24,6 +24,12 @@ RUN mkdir -p dev etc home proc root tmp usr/{bin,lib/pkgconfig,lib32} var && \
     ln -sv bin usr/sbin
 
 WORKDIR /tmp/glibc/build
+
+# Work around a compiler optimisation bug
+# https://lore.kernel.org/all/CA+chaQdwCJG2hWPtuzA8rfMVLPCsJOKDzOL4u2ZCK98rOnwCDA@mail.gmail.com/
+ENV CFLAGS="-O2 -pipe -fstack-protector-strong  -fexpensive-optimizations -D_FORTIFY_SOURCE=2 -D_GNU_SOURCE=1" \
+    CXXFLAGS="-O2 -pipe -fstack-protector-strong -fexpensive-optimizations -D_FORTIFY_SOURCE=2 -D_GNU_SOURCE=1" \
+    LDFLAGS="-Wl,-O1,--sort-common -Wl,-s"
 
 # Download and build glibc from source
 RUN apt-get -y update && \
